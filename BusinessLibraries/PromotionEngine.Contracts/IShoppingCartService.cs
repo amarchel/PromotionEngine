@@ -7,7 +7,7 @@ namespace PromotionEngine.Contracts
 {
     public interface IShoppingCartService
     {
-        ShoppingCart CreateShoppingCart(int id, int customerId);
+        ShoppingCart CreateShoppingCart();
         void AddItem(ShoppingCart shoppingCart, Product product, int count);
         void RemoveItem(ShoppingCart shoppingCart, Product product, int count);
 

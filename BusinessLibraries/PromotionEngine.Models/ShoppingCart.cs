@@ -6,9 +6,9 @@ namespace PromotionEngine.Models
 {
     public class ShoppingCart
     {
-        public ShoppingCart(int id, int customerId)
+        public ShoppingCart()
         {
-            Id = id;
+            
             CartItems = new List<KeyValuePair<Product, int>>();
             DiscountsApplied = new List<KeyValuePair<Discount, decimal>>();
             TotalDiscountAmount = 0;
@@ -23,8 +23,7 @@ namespace PromotionEngine.Models
 
         public ShoppingCart Clone()
         {
-            var scNew = new ShoppingCart(this.Id, this.CustomerId);
-
+            var scNew = new ShoppingCart();
             this.CartItems.ForEach(ci => { scNew.CartItems.Add(new KeyValuePair<Product, int>(ci.Key, ci.Value)); });
             return scNew;
         }

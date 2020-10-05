@@ -63,20 +63,9 @@ namespace PromotionEngine.Services
             return shoppingCart;
         }
 
-        public ShoppingCart CreateShoppingCart(int id, int customerId)
+        public ShoppingCart CreateShoppingCart()
         {
-            var customerShoppingCart = _shoppingCarts.Where(sc => sc.CustomerId == customerId).Select(sc => sc);
-
-            if (customerShoppingCart.Count() == 1)
-                return customerShoppingCart.First();
-            if (customerShoppingCart.Count() > 1)
-                throw new InvalidDataException("more than one shopping carts exist for one customer");
-
-            var maxId = _shoppingCarts.Select(sc => sc.Id)
-                .DefaultIfEmpty(0).Max();
-
-            _shoppingCarts.Add(new ShoppingCart(++maxId, customerId));
-            return _shoppingCarts[--maxId];
+            return new ShoppingCart();
         }
 
 
