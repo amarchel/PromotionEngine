@@ -20,6 +20,10 @@ namespace PromotionEngine.Models
 
         public DiscountCombination DiscountCombination { get; private set; }
 
-      
+        public Discount UpdateDiscountCombination(DiscountCombination discountCombination)
+        {
+            this.DiscountCombination = discountCombination;
+            return this;
+        }
     }
 }
