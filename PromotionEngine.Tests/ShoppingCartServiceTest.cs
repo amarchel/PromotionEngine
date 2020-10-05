@@ -19,7 +19,7 @@ namespace PromotionEngine.Tests
         {
             IDiscountService discountService = new DiscountService();
             IShoppingCartService scs = new ShoppingCartService(discountService);
-            
+
             var shoppingCart = scs.CreateShoppingCart(0, 1);
 
 
@@ -43,11 +43,50 @@ namespace PromotionEngine.Tests
 
             shoppingCart = scs.CalculateBill(shoppingCart);
 
-            Assert.AreEqual(100, shoppingCart.TotalBillAmount - shoppingCart.TotalDiscountAmount); 
+            Assert.AreEqual(100, shoppingCart.TotalBillAmount - shoppingCart.TotalDiscountAmount);
         }
         [Test]
-        public void CalculateBill_CaseB_ShouldReturn100()
+        public void CalculateBill_CaseB_ShouldReturn370()
         {
+            IDiscountService discountService = new DiscountService();
+            IShoppingCartService scs = new ShoppingCartService(discountService);
+
+            var shoppingCart = scs.CreateShoppingCart(0, 1);
+
+
+            var ps = new ProductService();
+            var pA = ps.CreateProduct("A", "product A", 50);
+            var pB = ps.CreateProduct("B", "product B", 30);
+            var pC = ps.CreateProduct("C", "product C", 20);
+            var pD = ps.CreateProduct("D", "product D", 15);
+
+            var discountA = discountService.CreateDiscount("Discount on A", "Discount if Purchase 3 As");
+            var pAs = new KeyValuePair<Product, int>(pA, 3);
+            var discountCombinationAs = new List<KeyValuePair<Product, int>>();
+            discountCombinationAs.Add(pAs);
+            var dci = new DiscountCombination(discountCombinationAs,
+                20);
+
+            discountService.CreateDiscountCombination(discountA.Id, dci);
+
+            //Discount B
+            var discountB = discountService.CreateDiscount("Discount on B", "Discount if Purchase 2 Bs");
+            var pBs = new KeyValuePair<Product, int>(pB, 2);
+            var discountCombinationBs = new List<KeyValuePair<Product, int>>();
+            discountCombinationBs.Add(pBs);
+            var dc2 = new DiscountCombination(discountCombinationBs,
+                15);
+
+            discountService.CreateDiscountCombination(discountB.Id, dc2);
+
+            scs.AddItem(shoppingCart, pA, 5);
+            scs.AddItem(shoppingCart, pB, 5);
+            scs.AddItem(shoppingCart, pC, 1);
+
+            shoppingCart = scs.CalculateBill(shoppingCart);
+
+            Assert.AreEqual(370, shoppingCart.TotalBillAmount - shoppingCart.TotalDiscountAmount);
         }
-        }
+
     }
+}
