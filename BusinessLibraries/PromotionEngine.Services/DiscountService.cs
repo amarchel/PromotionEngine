@@ -1,4 +1,5 @@
-﻿using PromotionEngine.Models;
+﻿using PromotionEngine.Contracts;
+using PromotionEngine.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -7,7 +8,7 @@ using System.Text;
 
 namespace PromotionEngine.Services
 {
-  public  class DiscountService
+  public  class DiscountService: IDiscountService
     {
         private readonly List<Discount> _discounts = new List<Discount>();
 

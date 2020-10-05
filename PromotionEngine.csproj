@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
@@ -12,6 +12,11 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.1.8" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="BusinessLibraries\PromotionEngine.Contracts\PromotionEngine.Contracts.csproj" />
+    <ProjectReference Include="BusinessLibraries\PromotionEngine.Services\PromotionEngine.Services.csproj" />
   </ItemGroup>
 
 </Project>
