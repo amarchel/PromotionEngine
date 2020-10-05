@@ -48,9 +48,9 @@ namespace PromotionEngine.Services
                 shoppingCart.CartItems.Remove(item);
         }
 
-        public ShoppingCart ComputeBill(ShoppingCart shoppingCart)
+        public ShoppingCart CalculateBill(ShoppingCart shoppingCart)
         {
-            var applicableDiscounts = GetAllPossibleDiscountsApplied(shoppingCart);
+            var applicableDiscounts = GetAllPossibleDiscounts(shoppingCart);
             var shoppingCartClone = shoppingCart.Clone();
 
             foreach (var applicableDiscount in applicableDiscounts)
@@ -63,18 +63,14 @@ namespace PromotionEngine.Services
             return shoppingCart;
         }
 
-        public ShoppingCart Checkout(ShoppingCart shoppingCart)
-        {
-            throw new NotImplementedException();
-        }
-
         public ShoppingCart CreateShoppingCart(int id, int customerId)
         {
             var customerShoppingCart = _shoppingCarts.Where(sc => sc.CustomerId == customerId).Select(sc => sc);
 
             if (customerShoppingCart.Count() == 1)
                 return customerShoppingCart.First();
-           
+            if (customerShoppingCart.Count() > 1)
+                throw new InvalidDataException("more than one shopping carts exist for one customer");
 
             var maxId = _shoppingCarts.Select(sc => sc.Id)
                 .DefaultIfEmpty(0).Max();
@@ -82,6 +78,7 @@ namespace PromotionEngine.Services
             _shoppingCarts.Add(new ShoppingCart(++maxId, customerId));
             return _shoppingCarts[--maxId];
         }
+
 
         private void ApplyDiscount(ShoppingCart shoppingCartClone,
             Discount discount)
@@ -134,7 +131,7 @@ namespace PromotionEngine.Services
                         new KeyValuePair<Discount, decimal>(discount, discountAmount));
                 }
             }
-            else //reverse and restore
+            else 
             {
                 itemsMarkedForDiscount.ForEach(it =>
                 {
@@ -149,11 +146,11 @@ namespace PromotionEngine.Services
             ApplyDiscount(shoppingCartClone, discount);
         }
 
-        private IEnumerable<Discount> GetAllPossibleDiscountsApplied(ShoppingCart sc)
+        private IEnumerable<Discount> GetAllPossibleDiscounts(ShoppingCart sc)
         {
             var discounts = _discountService.GetAll()
                 .ToList();
-            var applicaDiscounts = new List<Discount>();
+            var applicableDiscounts = new List<Discount>();
 
             var products = sc.CartItems.Select(ci => ci.Key);
 
@@ -165,10 +162,10 @@ namespace PromotionEngine.Services
                         .Any(ic => ic.Key == product))
                     .Select(disc => disc);
 
-                applicaDiscounts.AddRange(discountsHavingProduct);
+                applicableDiscounts.AddRange(discountsHavingProduct);
             }
 
-            return applicaDiscounts.Distinct();
+            return applicableDiscounts.Distinct();
         }
     }
 }

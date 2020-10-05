@@ -9,6 +9,9 @@ namespace PromotionEngine.Services
     public class ProductService : IProductService
     {
         readonly List<Product> products = new List<Product>();
+        public ProductService()
+        {
+        }
         public Product CreateProduct(string name, string description, decimal cost)
         {
             int maxId = products.Select(c => c.Id)

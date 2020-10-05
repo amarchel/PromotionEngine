@@ -11,7 +11,8 @@ namespace PromotionEngine.Services
   public  class DiscountService: IDiscountService
     {
         private readonly List<Discount> _discounts = new List<Discount>();
-
+        public DiscountService() { 
+        }
         public IEnumerable<Discount> GetAll()
         {
             return _discounts;

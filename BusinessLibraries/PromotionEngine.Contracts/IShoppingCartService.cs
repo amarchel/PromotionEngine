@@ -11,7 +11,7 @@ namespace PromotionEngine.Contracts
         void AddItem(ShoppingCart shoppingCart, Product product, int count);
         void RemoveItem(ShoppingCart shoppingCart, Product product, int count);
 
-        ShoppingCart ComputeBill(ShoppingCart shoppingCart);
-        ShoppingCart Checkout(ShoppingCart shoppingCart);
+        ShoppingCart CalculateBill(ShoppingCart shoppingCart);
+        
     }
 }
