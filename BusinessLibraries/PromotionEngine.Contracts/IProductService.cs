@@ -7,8 +7,8 @@ namespace PromotionEngine.Contracts
     public interface IProductService
     {
         IEnumerable<Product> GetAll();
-        Product Get(int id);
-        Product CreateProduct(string name, string description, decimal costPerUnit);
+        Product Get(string sku);
+        Product CreateProduct(string sku, string name, decimal costPerUnit);
         
     }
 }

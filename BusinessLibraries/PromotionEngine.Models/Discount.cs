@@ -6,17 +6,15 @@ namespace PromotionEngine.Models
 {
     public class Discount
     {
-        public Discount(int id, string name, string description)
+        public Discount(int id, string name, DiscountCombination discountCombination)
         {
             Id = id;
-            Name = name;
-            Description = description;
-
+            Name = name; 
+            DiscountCombination = discountCombination;
         }
 
         public int Id { get; }
-        public string Name { get; }
-        public string Description { get; }
+        public string Name { get; } 
 
         public DiscountCombination DiscountCombination { get; private set; }
 
@@ -26,4 +24,5 @@ namespace PromotionEngine.Models
             return this;
         }
     }
+    
 }

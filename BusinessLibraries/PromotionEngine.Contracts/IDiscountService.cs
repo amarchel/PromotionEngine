@@ -9,8 +9,8 @@ namespace PromotionEngine.Contracts
     {
         IEnumerable<Discount> GetAll();
         Discount Get(int id);
-        Discount CreateDiscount(string name, string description);
+        Discount CreateDiscount(string name, string description, DiscountCombination dc);
         DiscountCombination CreateDiscountCombination(int discountId, DiscountCombination discountCombination);
-        Discount UpdateDiscountCombination(int discountId, DiscountCombination discountCombination); 
+     
     }
 }

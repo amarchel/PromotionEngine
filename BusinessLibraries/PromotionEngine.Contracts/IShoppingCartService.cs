@@ -7,11 +7,10 @@ namespace PromotionEngine.Contracts
 {
     public interface IShoppingCartService
     {
-        ShoppingCart CreateShoppingCart();
-        void AddItem(ShoppingCart shoppingCart, Product product, int count);
-        void RemoveItem(ShoppingCart shoppingCart, Product product, int count);
+        IShoppingCart CreateShoppingCart();
+        void AddItem(IShoppingCart shoppingCart, IProduct product, int count);
 
-        ShoppingCart CalculateBill(ShoppingCart shoppingCart);
+        IShoppingCart CalculateBill(IShoppingCart shoppingCart);
         
     }
 }

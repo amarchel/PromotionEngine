@@ -2,19 +2,25 @@
 
 namespace PromotionEngine.Models
 {
-    public class Product
+    public interface IProduct
     {
-        public Product(int id, string name, string description, decimal cost)
+        decimal Cost { get; }
+        string Name { get; }
+        string Sku { get; }
+    }
+
+    public class Product : IProduct
+    {
+        public Product(string sku, string name, decimal cost)
         {
-            Id = id;
+            Sku = sku;
             Name = name;
-            Description = description;
             Cost = cost;
         }
 
-        public int Id { get; }
+        public string Sku { get; }
         public string Name { get; }
-        public string Description { get; }
+
         public decimal Cost { get; }
 
 

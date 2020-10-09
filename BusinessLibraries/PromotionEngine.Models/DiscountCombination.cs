@@ -6,10 +6,10 @@ namespace PromotionEngine.Models
 {
     public class DiscountCombination
     {
-        public IEnumerable<KeyValuePair<Product, int>> ItemsCombinations { get; set; }
+        public IEnumerable<KeyValuePair<IProduct, int>> ItemsCombinations { get; set; }
         public decimal DiscountAmount { get; set; }
 
-        public DiscountCombination(IEnumerable<KeyValuePair<Product, int>> itemsCombinations,
+        public DiscountCombination(IEnumerable<KeyValuePair<IProduct, int>> itemsCombinations,
             decimal discountAmount)
         {
 

@@ -1,6 +1,5 @@
 ﻿using PromotionEngine.Contracts;
 using PromotionEngine.Models;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -12,18 +11,15 @@ namespace PromotionEngine.Services
         public ProductService()
         {
         }
-        public Product CreateProduct(string name, string description, decimal cost)
+        public Product CreateProduct(string sku, string name, decimal cost)
         {
-            int maxId = products.Select(c => c.Id)
-               .DefaultIfEmpty(0).Max();
-            products.Add(new Product(++maxId, name, description, cost));
-            return products[--maxId];
+            products.Add(new Product(sku, name, cost));
+            return Get(sku);
         }
 
-        public Product Get(int id)
+        public Product Get(string sku)
         {
-            return products.First(p => p.Id == id);
-            
+            return products.FirstOrDefault(p => p.Sku == sku);
         }
 
         public IEnumerable<Product> GetAll()
