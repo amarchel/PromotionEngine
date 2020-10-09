@@ -5,6 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="IDiscountService.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\PromotionEngine.Models\PromotionEngine.Models.csproj" />
   </ItemGroup>
 

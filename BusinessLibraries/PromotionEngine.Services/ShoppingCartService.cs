@@ -8,11 +8,11 @@ namespace PromotionEngine.Services
     public class ShoppingCartService : IShoppingCartService
     {
 
-        private readonly IDiscountService _discountService;
+     
   
-        public ShoppingCartService(IDiscountService discountService)
+        public ShoppingCartService( )
         {
-            _discountService = discountService;
+            
            
         }
 
@@ -35,105 +35,56 @@ namespace PromotionEngine.Services
 
 
 
-        public IShoppingCart CalculateBill(IShoppingCart shoppingCart)
+        public IShoppingCart CalculateBill(IShoppingCart shoppingCart, IList<IPromotion> promotions)
         {
-            // Get all applicable discount for the order
-            var discounts = _discountService.GetAll()
-                .ToList();
-            var applicableDiscounts = new List<Discount>();
-
-            var products = shoppingCart.CartItems.Select(ci => ci.Key);
-
-            foreach (var product in products)
+            List<KeyValuePair<IProduct, int>> OrderClone = new List<KeyValuePair<IProduct, int>>();
+            List<KeyValuePair<IPromotion, decimal>>  PromotionsApplied = new List<KeyValuePair<IPromotion, decimal>>();
+            
+            foreach (var prooduct in shoppingCart.CartItems)
             {
-                var discountsHavingProduct = discounts
-                    .Where(d => d.DiscountCombination
-                        .ItemsCombinations
-                        .Any(ic => ic.Key == product))
-                    .Select(disc => disc);
-
-                applicableDiscounts.AddRange(discountsHavingProduct);
+                OrderClone.Add(prooduct);
             }
-
-            var shoppingCartClone = shoppingCart.Clone();
-
-            foreach (var applicableDiscount in applicableDiscounts)
-                ApplyDiscount(shoppingCartClone, applicableDiscount);
+          
+            decimal promotionalPrice = 0M;
+            foreach (IPromotion promotion in promotions)
+            {
+                var discountCount = 0;
+                foreach (var product in promotion.ProductInfo)
+                {
+                    int prodCount = OrderClone.ToList().Find(p => p.Key.Sku == product.Key.Sku).Value;
+                    if (prodCount >= product.Value)
+                    {
+                        discountCount = (prodCount / product.Value);
+                    }
+                    else
+                    {
+                        discountCount = 0;
+                    }
+                }
+                if (discountCount > 0)
+                {
+                    promotionalPrice += discountCount * promotion.PromoPrice;
+                    PromotionsApplied.Add(new KeyValuePair<IPromotion, decimal>(promotion, discountCount * promotion.PromoPrice));
+                    foreach (var product in promotion.ProductInfo)
+                    {
+                        var itemToRemove = OrderClone.Single(kvp => kvp.Key.Sku == product.Key.Sku);
+                        OrderClone.Add(new KeyValuePair<IProduct, int>(product.Key, OrderClone.First(kvp => kvp.Key.Sku == product.Key.Sku).Value - (discountCount * product.Value)));
+                        OrderClone.Remove(itemToRemove);
+                    }
+                }
+            }
+            promotionalPrice += OrderClone.Select(ci => ci.Key.Cost * ci.Value).Sum(); 
 
             shoppingCart.TotalBillAmount = shoppingCart.CartItems.Select(ci => ci.Key.Cost * ci.Value).Sum();
-            shoppingCart.TotalDiscountAmount = shoppingCartClone.TotalDiscountAmount;
-            shoppingCart.DiscountsApplied = shoppingCartClone.DiscountsApplied;
+            shoppingCart.TotalDiscountAmount = shoppingCart.TotalBillAmount- promotionalPrice;
+            shoppingCart.PromotionsApplied = PromotionsApplied;
+            shoppingCart.BillAmountAfterDiscount = promotionalPrice;
 
             return shoppingCart;
         }
 
 
-
-        private void ApplyDiscount(IShoppingCart shoppingCartClone,
-            Discount discount)
-        {
-            var discountCombination = discount.DiscountCombination;
-            decimal discountAmount = 0;
-
-            var itemsMarkedForDiscount = new List<KeyValuePair<IProduct, int>>();
-
-            var eligibleForDiscount = false;
-            foreach (var itemsCountsCombination in discountCombination.ItemsCombinations)
-            {
-                var shoppedItem = shoppingCartClone.CartItems
-                    .Where(ci => ci.Key == itemsCountsCombination.Key)
-                    .Select(ci => ci)
-                    .SingleOrDefault();
-
-                if (shoppedItem.Key == null)
-                {
-                    eligibleForDiscount = false;
-                    break;
-                }
-
-                if (shoppedItem.Value >= itemsCountsCombination.Value)
-                {
-                    eligibleForDiscount = true;
-                    itemsMarkedForDiscount.Add(shoppedItem);
-                    var prod = shoppedItem.Key;
-                    shoppingCartClone.CartItems.Remove(shoppedItem);
-                    var remainingCount = shoppedItem.Value - itemsCountsCombination.Value;
-                    shoppingCartClone.CartItems.Add(new KeyValuePair<IProduct, int>(prod, remainingCount));
-                }
-            }
-
-            if (eligibleForDiscount)
-            {
-                discountAmount = discountCombination.DiscountAmount;
-                var ds = shoppingCartClone.DiscountsApplied.Find(s => s.Key == discount);
-
-                if (ds.Key == null)
-                {
-                    shoppingCartClone.DiscountsApplied.Add(
-                        new KeyValuePair<Discount, decimal>(discount, discountAmount));
-                }
-                else
-                {
-                    discountAmount = ds.Value;
-                    shoppingCartClone.DiscountsApplied.Remove(ds);
-                    shoppingCartClone.DiscountsApplied.Add(
-                        new KeyValuePair<Discount, decimal>(discount, discountAmount));
-                }
-            }
-            else
-            {
-                itemsMarkedForDiscount.ForEach(it =>
-                {
-                    shoppingCartClone.CartItems.Remove(shoppingCartClone.CartItems.Find(p => p.Key == it.Key));
-                    shoppingCartClone.CartItems.Add(it);
-                });
-            }
-
-            if (discountAmount == 0) return;
-
-            shoppingCartClone.TotalDiscountAmount += discountAmount;
-            ApplyDiscount(shoppingCartClone, discount);
-        }
+         
     }
 }
 

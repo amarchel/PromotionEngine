@@ -10,7 +10,7 @@ namespace PromotionEngine.Contracts
         IShoppingCart CreateShoppingCart();
         void AddItem(IShoppingCart shoppingCart, IProduct product, int count);
 
-        IShoppingCart CalculateBill(IShoppingCart shoppingCart);
+        IShoppingCart CalculateBill(IShoppingCart shoppingCart,IList<IPromotion> promotions);
         
     }
 }

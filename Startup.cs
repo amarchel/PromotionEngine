@@ -11,7 +11,7 @@ namespace PromotionEngine
     {
         internal static void Configure(IServiceCollection services) {
             services.AddScoped<IProductService, ProductService>();
-            services.AddScoped<IDiscountService, DiscountService>();
+        
             services.AddScoped<IShoppingCartService, ShoppingCartService>();
         }
     }

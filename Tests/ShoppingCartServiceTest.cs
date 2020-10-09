@@ -13,9 +13,9 @@ namespace PromotionEngine.Tests
     [TestFixture]
     public class ShoppingCartServiceTest
     {
-        private Mock<IDiscountService> _discountService;
+   
         private IShoppingCartService _shoppingCartService;
-
+        private List<IPromotion> _promotions;
         private IShoppingCart _shoppingCart;
         private IProduct pA;
         private IProduct pB;
@@ -26,7 +26,7 @@ namespace PromotionEngine.Tests
         [SetUp]
         public void Setup()
         {
-            List<Discount> _discounts = new List<Discount>();
+            
             _cartItems = new List<KeyValuePair<IProduct, int>>();
 
             //Create Products
@@ -35,38 +35,23 @@ namespace PromotionEngine.Tests
             pC = new Product("C", "product C", 20);
             pD = new Product("D", "product D", 15);
 
+            //Promotions
+            Dictionary<IProduct, int> d1 = new Dictionary<IProduct, int>();
+            d1.Add(pA, 3);
+            Dictionary<IProduct, int> d2 = new Dictionary<IProduct, int>();
+            d2.Add(pB, 2);
+            Dictionary<IProduct, int> d3 = new Dictionary<IProduct, int>();
+            d3.Add(pC, 1);
+            d3.Add(pD, 1);
 
-            var discountCombinationAs = new List<KeyValuePair<IProduct, int>>();
-            discountCombinationAs.Add(new KeyValuePair<IProduct, int>(pA, 3));
-            var dci = new DiscountCombination(discountCombinationAs,
-                20);
-            Discount discountA = new Discount(1, "Discount on A", dci);
-            _discounts.Add(discountA);
+            _promotions = new List<IPromotion>()
+            {
+                new Promotion(1, d1, 130),
+                new Promotion(2, d2, 45),
+                new Promotion(3, d3, 30)
+            }; 
 
-
-            var discountCombinationBs = new List<KeyValuePair<IProduct, int>>();
-            discountCombinationBs.Add(new KeyValuePair<IProduct, int>(pB, 2));
-            var dc2 = new DiscountCombination(discountCombinationBs,
-                15);
-            Discount discountB = new Discount(2, "Discount on B", dc2);
-            _discounts.Add(discountB);
-
-
-
-            var discountCombinationCDs = new List<KeyValuePair<IProduct, int>>();
-            var pCs = new KeyValuePair<IProduct, int>(pC, 1);
-            var pDs = new KeyValuePair<IProduct, int>(pD, 1);
-            discountCombinationCDs.Add(pCs);
-            discountCombinationCDs.Add(pDs);
-            var dc3 = new DiscountCombination(discountCombinationCDs,
-                5);
-            Discount discountCD = new Discount(3, "Discount on C&D", dc3);
-            _discounts.Add(discountCD);
-
-            _discountService = new Mock<IDiscountService>();
-            _discountService.Setup(ds => ds.GetAll()).Returns(_discounts);
-
-            _shoppingCartService = new ShoppingCartService(_discountService.Object);
+            _shoppingCartService = new ShoppingCartService();
 
             // Create Empty Cart
             _shoppingCart = new ShoppingCart();
@@ -79,9 +64,9 @@ namespace PromotionEngine.Tests
             _cartItems.Add(new KeyValuePair<IProduct, int>(pB, 1));
             _cartItems.Add(new KeyValuePair<IProduct, int>(pC, 1));
             _shoppingCart.CartItems = _cartItems;
-            _shoppingCart = _shoppingCartService.CalculateBill(_shoppingCart);
+            _shoppingCart = _shoppingCartService.CalculateBill(_shoppingCart, _promotions);
 
-            Assert.AreEqual(100, _shoppingCart.TotalBillAmount - _shoppingCart.TotalDiscountAmount);
+            Assert.AreEqual(100, _shoppingCart.BillAmountAfterDiscount);
         }
 
         [Test]
@@ -92,9 +77,9 @@ namespace PromotionEngine.Tests
             _cartItems.Add(new KeyValuePair<IProduct, int>(pB, 5));
             _cartItems.Add(new KeyValuePair<IProduct, int>(pC, 1));
             _shoppingCart.CartItems = _cartItems;
-            _shoppingCart = _shoppingCartService.CalculateBill(_shoppingCart);
+            _shoppingCart = _shoppingCartService.CalculateBill(_shoppingCart, _promotions);
 
-            Assert.AreEqual(370, _shoppingCart.TotalBillAmount - _shoppingCart.TotalDiscountAmount);
+            Assert.AreEqual(370,  _shoppingCart.BillAmountAfterDiscount);
         }
 
         [Test]
@@ -105,9 +90,9 @@ namespace PromotionEngine.Tests
             _cartItems.Add(new KeyValuePair<IProduct, int>(pC, 1));
             _cartItems.Add(new KeyValuePair<IProduct, int>(pD, 1));
             _shoppingCart.CartItems = _cartItems;
-            _shoppingCart = _shoppingCartService.CalculateBill(_shoppingCart);
+            _shoppingCart = _shoppingCartService.CalculateBill(_shoppingCart, _promotions);
 
-            Assert.AreEqual(280, _shoppingCart.TotalBillAmount - _shoppingCart.TotalDiscountAmount);
+            Assert.AreEqual(280,  _shoppingCart.BillAmountAfterDiscount);
         }
     }
 }

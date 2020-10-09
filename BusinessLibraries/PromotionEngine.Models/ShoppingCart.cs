@@ -8,12 +8,13 @@ namespace PromotionEngine.Models
     {
         List<KeyValuePair<IProduct, int>> CartItems { get; set; }
         int CustomerId { get; set; }
-        List<KeyValuePair<Discount, decimal>> DiscountsApplied { get; set; }
+        List<KeyValuePair<IPromotion, decimal>> PromotionsApplied { get; set; }
         int Id { get; set; }
         decimal TotalBillAmount { get; set; }
         decimal TotalDiscountAmount { get; set; }
-
-        ShoppingCart Clone();
+        decimal BillAmountAfterDiscount { get; set; }
+        
+       
     }
 
     public class ShoppingCart : IShoppingCart
@@ -22,23 +23,18 @@ namespace PromotionEngine.Models
         {
 
             CartItems = new List<KeyValuePair<IProduct, int>>();
-            DiscountsApplied = new List<KeyValuePair<Discount, decimal>>();
+            PromotionsApplied = new List<KeyValuePair<IPromotion, decimal>>();
             TotalDiscountAmount = 0;
         }
         public int Id { get; set; }
         public int CustomerId { get; set; }
         public List<KeyValuePair<IProduct, int>> CartItems { get; set; }
-        public List<KeyValuePair<Discount, decimal>> DiscountsApplied { get; set; }
+        public List<KeyValuePair<IPromotion, decimal>> PromotionsApplied { get; set; }
 
         public decimal TotalBillAmount { get; set; }
         public decimal TotalDiscountAmount { get; set; }
-
-        public ShoppingCart Clone()
-        {
-            var scNew = new ShoppingCart();
-            this.CartItems.ForEach(ci => { scNew.CartItems.Add(new KeyValuePair<IProduct, int>(ci.Key, ci.Value)); });
-            return scNew;
-        }
+        public decimal BillAmountAfterDiscount { get; set; }
+        
     }
 
 }
