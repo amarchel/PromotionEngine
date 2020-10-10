@@ -16,7 +16,7 @@ namespace PromotionEngine.Tests
    
         private IShoppingCartService _shoppingCartService;
         private List<IPromotion> _promotions;
-        private IShoppingCart _shoppingCart;
+     
         private IProduct pA;
         private IProduct pB;
         private IProduct pC;
@@ -53,8 +53,7 @@ namespace PromotionEngine.Tests
 
             _shoppingCartService = new ShoppingCartService();
 
-            // Create Empty Cart
-            _shoppingCart = new ShoppingCart();
+            
         }
 
         [Test]
@@ -63,10 +62,10 @@ namespace PromotionEngine.Tests
             _cartItems.Add(new KeyValuePair<IProduct, int>(pA, 1));
             _cartItems.Add(new KeyValuePair<IProduct, int>(pB, 1));
             _cartItems.Add(new KeyValuePair<IProduct, int>(pC, 1));
-            _shoppingCart.CartItems = _cartItems;
-            _shoppingCart = _shoppingCartService.CalculateBill(_shoppingCart, _promotions);
+            
+            decimal billAmountAfterDiscount = _shoppingCartService.CalculateBillAmount(_cartItems, _promotions);
 
-            Assert.AreEqual(100, _shoppingCart.BillAmountAfterDiscount);
+            Assert.AreEqual(100, billAmountAfterDiscount);
         }
 
         [Test]
@@ -76,10 +75,10 @@ namespace PromotionEngine.Tests
             _cartItems.Add(new KeyValuePair<IProduct, int>(pA, 5));
             _cartItems.Add(new KeyValuePair<IProduct, int>(pB, 5));
             _cartItems.Add(new KeyValuePair<IProduct, int>(pC, 1));
-            _shoppingCart.CartItems = _cartItems;
-            _shoppingCart = _shoppingCartService.CalculateBill(_shoppingCart, _promotions);
+           
+            decimal billAmountAfterDiscount = _shoppingCartService.CalculateBillAmount(_cartItems, _promotions);
 
-            Assert.AreEqual(370,  _shoppingCart.BillAmountAfterDiscount);
+            Assert.AreEqual(370, billAmountAfterDiscount);
         }
 
         [Test]
@@ -89,10 +88,10 @@ namespace PromotionEngine.Tests
             _cartItems.Add(new KeyValuePair<IProduct, int>(pB, 5));
             _cartItems.Add(new KeyValuePair<IProduct, int>(pC, 1));
             _cartItems.Add(new KeyValuePair<IProduct, int>(pD, 1));
-            _shoppingCart.CartItems = _cartItems;
-            _shoppingCart = _shoppingCartService.CalculateBill(_shoppingCart, _promotions);
 
-            Assert.AreEqual(280,  _shoppingCart.BillAmountAfterDiscount);
+            decimal billAmountAfterDiscount = _shoppingCartService.CalculateBillAmount(_cartItems, _promotions);
+
+            Assert.AreEqual(280, billAmountAfterDiscount);
         }
     }
 }

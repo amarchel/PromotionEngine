@@ -35,12 +35,12 @@ namespace PromotionEngine.Services
 
 
 
-        public IShoppingCart CalculateBill(IShoppingCart shoppingCart, IList<IPromotion> promotions)
+        public decimal CalculateBillAmount(List<KeyValuePair<IProduct, int>> cartItems, IList<IPromotion> promotions)
         {
             List<KeyValuePair<IProduct, int>> orderClone = new List<KeyValuePair<IProduct, int>>();
             List<KeyValuePair<IPromotion, decimal>> promotionsApplied = new List<KeyValuePair<IPromotion, decimal>>();
 
-            foreach (var prooduct in shoppingCart.CartItems)
+            foreach (var prooduct in cartItems)
             {
                 orderClone.Add(prooduct);
             }
@@ -75,12 +75,10 @@ namespace PromotionEngine.Services
             }
             promotionalPrice += orderClone.Select(ci => ci.Key.Cost * ci.Value).Sum();
 
-            shoppingCart.TotalBillAmount = shoppingCart.CartItems.Select(ci => ci.Key.Cost * ci.Value).Sum();
-            shoppingCart.TotalDiscountAmount = shoppingCart.TotalBillAmount - promotionalPrice;
-            shoppingCart.PromotionsApplied = promotionsApplied;
-            shoppingCart.BillAmountAfterDiscount = promotionalPrice;
+            decimal TotalBillAmount = cartItems.Select(ci => ci.Key.Cost * ci.Value).Sum();
+            decimal TotalDiscountAmount = TotalBillAmount - promotionalPrice; 
 
-            return shoppingCart;
+            return promotionalPrice;
         }
 
 
