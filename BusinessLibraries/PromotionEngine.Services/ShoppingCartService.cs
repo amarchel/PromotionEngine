@@ -8,12 +8,12 @@ namespace PromotionEngine.Services
     public class ShoppingCartService : IShoppingCartService
     {
 
-     
-  
-        public ShoppingCartService( )
+
+
+        public ShoppingCartService()
         {
-            
-           
+
+
         }
 
         public IShoppingCart CreateShoppingCart()
@@ -37,54 +37,54 @@ namespace PromotionEngine.Services
 
         public IShoppingCart CalculateBill(IShoppingCart shoppingCart, IList<IPromotion> promotions)
         {
-            List<KeyValuePair<IProduct, int>> OrderClone = new List<KeyValuePair<IProduct, int>>();
-            List<KeyValuePair<IPromotion, decimal>>  PromotionsApplied = new List<KeyValuePair<IPromotion, decimal>>();
-            
+            List<KeyValuePair<IProduct, int>> orderClone = new List<KeyValuePair<IProduct, int>>();
+            List<KeyValuePair<IPromotion, decimal>> promotionsApplied = new List<KeyValuePair<IPromotion, decimal>>();
+
             foreach (var prooduct in shoppingCart.CartItems)
             {
-                OrderClone.Add(prooduct);
+                orderClone.Add(prooduct);
             }
-          
+
             decimal promotionalPrice = 0M;
             foreach (IPromotion promotion in promotions)
             {
-                var discountCount = 0;
+                var PromoCount = 0;
                 foreach (var product in promotion.ProductInfo)
                 {
-                    int prodCount = OrderClone.ToList().Find(p => p.Key.Sku == product.Key.Sku).Value;
+                    int prodCount = orderClone.ToList().Find(p => p.Key.Sku == product.Key.Sku).Value;
                     if (prodCount >= product.Value)
                     {
-                        discountCount = (prodCount / product.Value);
+                        PromoCount = (prodCount / product.Value);
                     }
                     else
                     {
-                        discountCount = 0;
+                        PromoCount = 0;
                     }
                 }
-                if (discountCount > 0)
+                if (PromoCount > 0)
                 {
-                    promotionalPrice += discountCount * promotion.PromoPrice;
-                    PromotionsApplied.Add(new KeyValuePair<IPromotion, decimal>(promotion, discountCount * promotion.PromoPrice));
+                    promotionalPrice += PromoCount * promotion.PromoPrice;
+                    promotionsApplied.Add(new KeyValuePair<IPromotion, decimal>(promotion, PromoCount * promotion.PromoPrice));
                     foreach (var product in promotion.ProductInfo)
                     {
-                        var itemToRemove = OrderClone.Single(kvp => kvp.Key.Sku == product.Key.Sku);
-                        OrderClone.Add(new KeyValuePair<IProduct, int>(product.Key, OrderClone.First(kvp => kvp.Key.Sku == product.Key.Sku).Value - (discountCount * product.Value)));
-                        OrderClone.Remove(itemToRemove);
+                        var itemToRemove = orderClone.Single(kvp => kvp.Key.Sku == product.Key.Sku);
+                        orderClone.Add(new KeyValuePair<IProduct, int>(product.Key, orderClone.First(kvp => kvp.Key.Sku == product.Key.Sku).Value - (PromoCount * product.Value)));
+                        orderClone.Remove(itemToRemove);
                     }
                 }
             }
-            promotionalPrice += OrderClone.Select(ci => ci.Key.Cost * ci.Value).Sum(); 
+            promotionalPrice += orderClone.Select(ci => ci.Key.Cost * ci.Value).Sum();
 
             shoppingCart.TotalBillAmount = shoppingCart.CartItems.Select(ci => ci.Key.Cost * ci.Value).Sum();
-            shoppingCart.TotalDiscountAmount = shoppingCart.TotalBillAmount- promotionalPrice;
-            shoppingCart.PromotionsApplied = PromotionsApplied;
+            shoppingCart.TotalDiscountAmount = shoppingCart.TotalBillAmount - promotionalPrice;
+            shoppingCart.PromotionsApplied = promotionsApplied;
             shoppingCart.BillAmountAfterDiscount = promotionalPrice;
 
             return shoppingCart;
         }
 
 
-         
+
     }
 }
 
