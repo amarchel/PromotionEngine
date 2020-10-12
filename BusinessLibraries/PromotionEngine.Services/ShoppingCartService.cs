@@ -80,7 +80,7 @@ namespace PromotionEngine.Services
             promotionalPrice += orderClone.Select(ci => ci.Key.Cost * ci.Value).Sum();
 
             decimal TotalBillAmount = cartItems.Select(ci => ci.Key.Cost * ci.Value).Sum();
-            decimal TotalDiscountAmount = TotalBillAmount - promotionalPrice;
+            decimal TotalDiscountAmount = TotalBillAmount - promotionalPrice; 
 
             return promotionalPrice;
         }
