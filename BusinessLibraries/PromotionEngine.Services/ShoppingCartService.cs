@@ -54,11 +54,9 @@ namespace PromotionEngine.Services
                     int prodCount = orderClone.ToList().Find(p => p.Key.Sku == product.Key.Sku).Value;
                     if (prodCount >= product.Value)
                     {
-                        int currentPromoCount = (prodCount / product.Value);
-                        if (currentPromoCount < PromoCount)
-                        {
-                            PromoCount = currentPromoCount;
-                        }
+                         
+                            PromoCount = (prodCount / product.Value); ;
+                        
                     }
                     else
                     {
